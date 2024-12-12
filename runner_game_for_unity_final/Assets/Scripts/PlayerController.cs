@@ -61,10 +61,18 @@ public class PlayerController : MonoBehaviour
         }else if (desiredLane == 2)
         {
             targetPosition += Vector3.right * laneDistance;
-        }    
+        }
 
 
-        transform.position = targetPosition;
+        //transform.position = targetPosition;
+        if (transform.position == targetPosition)
+            return;
+        Vector3 diff = targetPosition - transform.position;
+        Vector3 moveDir= diff.normalized* 25* Time.deltaTime;
+        if (moveDir.sqrMagnitude <diff.sqrMagnitude)
+            controller.Move(moveDir);
+        else 
+            controller.Move(diff);
     }
 
     private void FixedUpdate()
@@ -76,5 +84,13 @@ public class PlayerController : MonoBehaviour
     private void Jump()
     {
         direction.y = jumpForce;
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if(hit.transform.tag == "Obstacle")
+        {
+            PlayerManager.gameOver = true;
+        }
     }
 }
