@@ -10,6 +10,8 @@ public class PlayerManager : MonoBehaviour
     public static bool isGameStarted;
     public GameObject startingText;
 
+    public static int numberOfCoins;
+
 
 
     void Start()
@@ -18,6 +20,7 @@ public class PlayerManager : MonoBehaviour
         Time.timeScale = 1;
 
         isGameStarted = false;
+        numberOfCoins = 0;
     }
 
     // Update is called once per frame
