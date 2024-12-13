@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour
     public Vector3 direction;
     public float forwardSpeed;
 
+    public float maxSpeed;
+
     private int desiredLane = 1; // 0 chap 1 o'rta 2 o'ng
     public float laneDistance = 4; //ikki tomonga harakat 
 
@@ -18,7 +20,6 @@ public class PlayerController : MonoBehaviour
 
 
 
-    public Animator animator;
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -29,8 +30,11 @@ public class PlayerController : MonoBehaviour
     {
         if(!PlayerManager.isGameStarted)
             return;
+        //increase speed
+        if(forwardSpeed < maxSpeed)
+            forwardSpeed += 0.1f * Time.deltaTime;
 
-        animator.SetBool("isGameStarted", true);
+
 
         direction.z = forwardSpeed;
 
@@ -46,6 +50,8 @@ public class PlayerController : MonoBehaviour
                 Jump();
             }
         }
+
+        
 
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
@@ -108,4 +114,6 @@ public class PlayerController : MonoBehaviour
             PlayerManager.gameOver = true;
         }
     }
+
+   
 }
