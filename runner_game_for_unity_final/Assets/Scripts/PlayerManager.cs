@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class PlayerManager : MonoBehaviour
 {
@@ -11,6 +13,9 @@ public class PlayerManager : MonoBehaviour
     public GameObject startingText;
 
     public static int numberOfCoins;
+
+    public Text coinsText;
+
 
 
 
@@ -31,6 +36,7 @@ public class PlayerManager : MonoBehaviour
             Time.timeScale = 0;
             gameOverPanel.SetActive(true);
         }
+        coinsText.text = "Coins:" + numberOfCoins;
 
         if(SwipeManager.tap)
         {
