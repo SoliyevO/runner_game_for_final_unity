@@ -163,12 +163,15 @@
 
 
 using System.Collections;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
     private CharacterController controller;
-    private Vector3 move;
+    private Vector3 direction;
     public float forwardSpeed;
     public float maxSpeed;
 
@@ -179,7 +182,7 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
     public Transform groundCheck;
 
-    public float gravity = -12f;
+    public float Gravity = -20f;
     public float jumpHeight = 2;
     private Vector3 velocity;
 
@@ -188,7 +191,10 @@ public class PlayerController : MonoBehaviour
 
     public float slideDuration = 1.5f;
 
+    public float jumpForce;
+
     bool toggle = false;
+    //private object direction;
 
     void Start()
     {
@@ -225,35 +231,53 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 0, 0);
 
         animator.SetBool("isGameStarted", true);
-        move.z = forwardSpeed;
+        direction.z = forwardSpeed;
 
-        // Ground Check
-        isGrounded = Physics.CheckSphere(groundCheck.position, 0.17f, groundLayer);
-        animator.SetBool("isGrounded", isGrounded);
-        if (isGrounded && velocity.y < 0)
-            velocity.y = -2f; // -1f ni -2f ga o'zgartirdik, bu stabil harakat beradi.
+        //// Ground Check
+        //isGrounded = Physics.CheckSphere(groundCheck.position, 0.17f, groundLayer);
+        //animator.SetBool("isGrounded", isGrounded);
+        //if (isGrounded && velocity.y < 0)
+        //    velocity.y = -2f; // -1f ni -2f ga o'zgartirdik, bu stabil harakat beradi.
 
         // Jump
-        if (isGrounded)
+        direction.z = forwardSpeed;
+
+        direction.y += Gravity * Time.deltaTime;
+
+        if(controller.isGrounded)
         {
-            if (SwipeManager.swipeUp || Input.GetKeyDown(KeyCode.UpArrow))
+
+            if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                Debug.Log("Jump Detected");
                 Jump();
             }
+        }
 
-            if ((SwipeManager.swipeDown || Input.GetKeyDown(KeyCode.DownArrow)) && !isSliding)
-                StartCoroutine(Slide());
-        }
-        else
+        if(Input.GetKeyDown(KeyCode.DownArrow))
         {
-            velocity.y += gravity * Time.deltaTime; // Gravitatsiyani qo‘shishda muammo yo‘q.
-            if ((SwipeManager.swipeDown || Input.GetKeyDown(KeyCode.DownArrow)) && !isSliding)
-            {
-                StartCoroutine(Slide());
-                velocity.y = -10; // Bu sakrashdan pastga tushish jarayonida yordam beradi.
-            }
+            StartCoroutine(Slide());
         }
+
+        //if (isGrounded)
+        //{
+        //    if (SwipeManager.swipeUp || Input.GetKeyDown(KeyCode.UpArrow))
+        //    {
+        //        Debug.Log("Jump Detected");
+        //        Jump();
+        //    }
+
+        //    if ((SwipeManager.swipeDown || Input.GetKeyDown(KeyCode.DownArrow)) && !isSliding)
+        //        StartCoroutine(Slide());
+        //}
+        //else
+        //{
+        //    velocity.y += Gravity * Time.deltaTime; // Gravitatsiyani qo‘shishda muammo yo‘q.
+        //    if ((SwipeManager.swipeDown || Input.GetKeyDown(KeyCode.DownArrow)) && !isSliding)
+        //    {
+        //        StartCoroutine(Slide());
+        //        velocity.y = -10; // Bu sakrashdan pastga tushish jarayonida yordam beradi.
+        //    }
+        //}
 
         controller.Move(velocity * Time.deltaTime);
 
@@ -288,21 +312,25 @@ public class PlayerController : MonoBehaviour
                 controller.Move(diff);
         }
 
-        controller.Move(move * Time.deltaTime);
+        controller.Move(direction * Time.deltaTime);
     }
 
     private void Jump()
     {
-        if (!isGrounded) return; // Faqat yerga tegib turgan holatda sakrashga ruxsat bering.
+        direction.y = jumpForce;
 
-        StopCoroutine(Slide());
-        animator.SetBool("isSliding", false);
-        animator.SetTrigger("jump");
-        controller.center = Vector3.zero; // Normal holatni o'rnating.
-        controller.height = 2; // Harakatni davom ettirish uchun original balandlikka qayting.
-        isSliding = false;
 
-        velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity); // Sakrashning vertikal tezligini hisoblash.
+
+        //if (!isGrounded) return; // Faqat yerga tegib turgan holatda sakrashga ruxsat bering.
+
+        //StopCoroutine(Slide());
+        //animator.SetBool("isSliding", false);
+        //animator.SetTrigger("jump");
+        //controller.center = Vector3.zero; // Normal holatni o'rnating.
+        //controller.height = 2; // Harakatni davom ettirish uchun original balandlikka qayting.
+        //isSliding = false;
+
+        //velocity.y = Mathf.Sqrt(jumpHeight * -2f * Gravity); // Sakrashning vertikal tezligini hisoblash.
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
@@ -316,19 +344,19 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator Slide()
     {
-        isSliding = true;
+        //isSliding = true;
         animator.SetBool("isSliding", true);
-        yield return new WaitForSeconds(0.25f / Time.timeScale);
-        controller.center = new Vector3(0, -0.5f, 0);
-        controller.height = 1;
+        yield return new WaitForSeconds(1f / Time.timeScale);
+        //controller.center = new Vector3(0, -0.5f, 0);
+        //controller.height = 1;
 
-        yield return new WaitForSeconds((slideDuration - 0.25f) / Time.timeScale);
+        //yield return new WaitForSeconds((slideDuration - 0.25f) / Time.timeScale);
 
         animator.SetBool("isSliding", false);
 
-        controller.center = Vector3.zero;
-        controller.height = 2;
+        //controller.center = Vector3.zero;
+        //controller.height = 2;
 
-        isSliding = false;
+        //isSliding = false;
     }
 }
