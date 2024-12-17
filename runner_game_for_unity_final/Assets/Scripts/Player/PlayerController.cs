@@ -32,12 +32,22 @@ public class PlayerController : MonoBehaviour
     public float jumpForce;
 
     bool toggle = false;
+
     //private object direction;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
         Time.timeScale = 1.2f;
+
+        //playerHealth = GetComponent<PlayerHealth>();
+
+        //// Xatolikni oldini olish uchun tekshiramiz
+        //if (playerHealth == null)
+        //{
+        //    Debug.LogError("PlayerHealth komponenti topilmadi!");
+        //}
+
     }
 
     private void FixedUpdate()
@@ -71,12 +81,7 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("isGameStarted", true);
         direction.z = forwardSpeed;
 
-        //// Ground Check
-        //isGrounded = Physics.CheckSphere(groundCheck.position, 0.17f, groundLayer);
-        //animator.SetBool("isGrounded", isGrounded);
-        //if (isGrounded && velocity.y < 0)
-        //    velocity.y = -2f; // -1f ni -2f ga o'zgartirdik, bu stabil harakat beradi.
-
+       
         // Jump
         direction.z = forwardSpeed;
 
@@ -179,6 +184,34 @@ public class PlayerController : MonoBehaviour
             FindObjectOfType<AudioManager>().PlaySound("GameOver");
         }
     }
+
+
+    //private void OnControllerColliderHit(ControllerColliderHit hit)
+    //{
+    //    if (hit.transform.CompareTag("Obstacle")) // Obstaclega tegganda
+    //    {
+    //        if (playerHealth != null)
+    //        {
+    //            bool isGameOver = playerHealth.TakeDamage(); // Jonni kamaytirish
+
+    //            if (isGameOver) // Jon tugadi
+    //            {
+    //                PlayerManager.gameOver = true;
+    //                Debug.Log("Game Over!");
+    //                FindObjectOfType<AudioManager>().PlaySound("GameOver");
+    //            }
+    //            else
+    //            {
+    //                Debug.Log("Jon kamaydi! Qolgan jon: " + playerHealth.GetCurrentHealth());
+    //                FindObjectOfType<AudioManager>().PlaySound("Hit");
+    //            }
+    //        }
+    //    }
+    //}
+
+
+
+
 
     private IEnumerator Slide()
     {

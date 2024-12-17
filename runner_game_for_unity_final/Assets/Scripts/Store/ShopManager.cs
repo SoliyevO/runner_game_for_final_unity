@@ -19,7 +19,7 @@ public class ShopManager : MonoBehaviour
     void Start()
     {
         //Load the isLocked data for each character
-        foreach(ShopElement c in characters)
+        foreach (ShopElement c in characters)
         {
             if (c.price != 0)
                 c.isLocked = PlayerPrefs.GetInt(c.name, 1) == 1 ? true : false;
@@ -36,7 +36,7 @@ public class ShopManager : MonoBehaviour
         UpdateUI();
     }
 
-   
+
     public void ChangeNextCharacter()
     {
         shopCharacters[characterIndex].SetActive(false);
@@ -77,7 +77,7 @@ public class ShopManager : MonoBehaviour
 
     public void RewardWithAD()
     {
-        if(characterIndex == 1)
+        if (characterIndex == 1)
         {
             characters[characterIndex].isLocked = false;
             PlayerPrefs.SetInt(characters[characterIndex].name, 0);
@@ -133,6 +133,6 @@ public class ShopManager : MonoBehaviour
             adButton.gameObject.SetActive(false);
             buyButton.gameObject.SetActive(false);
         }
-            
+
     }
 }
