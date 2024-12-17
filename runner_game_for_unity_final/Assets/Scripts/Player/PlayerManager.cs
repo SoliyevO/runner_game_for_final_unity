@@ -11,16 +11,20 @@ public class PlayerManager : MonoBehaviour
 
     public static bool isGameStarted;
     public GameObject startingText;
+    public Text scoreText;
+
 
     public static int numberOfCoins;
+    public int score = 0;
+
 
     public Text coinsText;
-
-
-
+    internal static bool isGamePaused;
 
     void Start()
     {
+
+
         gameOver = false;
         Time.timeScale = 1;
 
@@ -30,8 +34,14 @@ public class PlayerManager : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+
     {
-        if(gameOver)
+
+
+        //Update UI
+        scoreText.text ="Score:"+(score + numberOfCoins);
+
+        if (gameOver)
         {
             Time.timeScale = 0;
             gameOverPanel.SetActive(true);
