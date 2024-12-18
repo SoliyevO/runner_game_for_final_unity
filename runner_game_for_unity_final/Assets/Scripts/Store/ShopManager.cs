@@ -14,7 +14,7 @@ public class ShopManager : MonoBehaviour
     public GameObject mainMenu;
 
     public Button buyButton;
-    public Button adButton;
+    //public Button adButton;
 
     void Start()
     {
@@ -117,8 +117,8 @@ public class ShopManager : MonoBehaviour
 
         if (c.isLocked)
         {
-            adButton.gameObject.SetActive(true);
-            adButton.interactable = true;
+            //adButton.gameObject.SetActive(true);
+            //adButton.interactable = true;
 
             buyButton.gameObject.SetActive(true);
             buyButton.GetComponentInChildren<TextMeshProUGUI>().text = c.price + "";
@@ -130,8 +130,9 @@ public class ShopManager : MonoBehaviour
         }
         else
         {
-            adButton.gameObject.SetActive(false);
+            //adButton.gameObject.SetActive(false);
             buyButton.gameObject.SetActive(false);
+            
         }
 
     }
