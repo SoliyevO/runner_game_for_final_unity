@@ -12,9 +12,12 @@ public class PlayerController : MonoBehaviour
     private Vector3 direction;
     public float forwardSpeed;
     public float maxSpeed;
+    public float speedIncreaseRate = 0.1f; // Har sekundda oshish miqdori
+    private bool isSpeedBoosted = false; // Tezlik oshirilganligini tekshirish
+    private float speedBeforeBoost; // Boostdan oldingi forwardSpeed qiymati
 
-    private int desiredLane = 1;//0:left, 1:middle, 2:right
-    public float laneDistance = 2.5f;//The distance between two lanes
+    private int desiredLane = 1;//0:chap, 1:o'rta, 2:o'ng
+    public float laneDistance = 2.5f;
 
     public bool isGrounded;
     public LayerMask groundLayer;
@@ -33,7 +36,9 @@ public class PlayerController : MonoBehaviour
 
     bool toggle = false;
 
-    //private object direction;
+    public bool isGameStarted = false; // O'yin boshlanish flagi
+
+
 
     void Start()
     {
@@ -50,30 +55,60 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    //private void FixedUpdate()
+    //{
+    //    if (!PlayerManager.isGameStarted || PlayerManager.gameOver)
+    //        return;
+
+    //    // Increase Speed
+    //    if (toggle)
+    //    {
+    //        toggle = false;
+    //        if (forwardSpeed < maxSpeed)
+    //            forwardSpeed += 0.1f * Time.fixedDeltaTime;
+    //    }
+    //    else
+    //    {
+    //        toggle = true;
+    //        if (Time.timeScale < 2f)
+    //            Time.timeScale += 0.005f * Time.fixedDeltaTime;
+    //    }
+    //}
+
     private void FixedUpdate()
     {
+        // Agar o'yin boshlanmagan yoki tugagan bo'lsa, hech narsa qilmaslik
         if (!PlayerManager.isGameStarted || PlayerManager.gameOver)
             return;
 
-        // Increase Speed
-        if (toggle)
+        // Tezlikni oshirishni faqat forwardSpeed < maxSpeed bo'lganda qilish
+        //if (forwardSpeed < maxSpeed)
+        //{
+        //    forwardSpeed += 0.1f * Time.fixedDeltaTime; // Tezlikni oshirish
+        //}
+
+        // Time.timeScale ni oshirish (agar kerak bo'lsa)
+        if (Time.timeScale < 2f)
         {
-            toggle = false;
-            if (forwardSpeed < maxSpeed)
-                forwardSpeed += 0.1f * Time.fixedDeltaTime;
-        }
-        else
-        {
-            toggle = true;
-            if (Time.timeScale < 2f)
-                Time.timeScale += 0.005f * Time.fixedDeltaTime;
+            Time.timeScale += 0.005f * Time.fixedDeltaTime; // TimeScale boshqaruvi
         }
     }
 
+
+
+
     void Update()
     {
+
         if (!PlayerManager.isGameStarted || PlayerManager.gameOver)
             return;
+
+        if (!isSpeedBoosted && forwardSpeed < maxSpeed)
+        {
+            // ForwardSpeed har sekundda o‘sib boradi
+            forwardSpeed += speedIncreaseRate * Time.deltaTime;
+            forwardSpeed = Mathf.Clamp(forwardSpeed, 0, maxSpeed); // MaxSpeeddan oshmaydi
+        }
 
         // Har doim o'yinchini oldinga qarab turishiga ishonch hosil qiling
         transform.rotation = Quaternion.Euler(0, 0, 0);
@@ -81,7 +116,12 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("isGameStarted", true);
         direction.z = forwardSpeed;
 
-       
+        if (isGameStarted)
+        {
+            forwardSpeed += speedIncreaseRate * Time.deltaTime;
+            forwardSpeed = Mathf.Clamp(forwardSpeed, 0, maxSpeed); // MaxSpeed'ni cheklash
+        }
+
         // Jump
         direction.z = forwardSpeed;
 
@@ -158,6 +198,29 @@ public class PlayerController : MonoBehaviour
         controller.Move(direction * Time.deltaTime);
     }
 
+
+    public void IncreaseSpeedTemporarily(float amount, float duration)
+    {
+        if (!isSpeedBoosted)
+        {
+            speedBeforeBoost = forwardSpeed; // Boostdan oldingi tezlikni saqlaymiz
+        }
+
+        forwardSpeed += amount; // Tezlikni oshirish
+        forwardSpeed = Mathf.Clamp(forwardSpeed, 0, maxSpeed); // Maksimal tezlikni oshirmaslik
+        isSpeedBoosted = true; // Tezlik oshirilganligini belgilash
+
+        StartCoroutine(ResetSpeedAfterDuration(duration));
+    }
+
+    private IEnumerator ResetSpeedAfterDuration(float duration)
+    {
+        yield return new WaitForSeconds(duration); // Boost vaqti tugashini kutamiz
+        forwardSpeed = speedBeforeBoost; // Avvalgi forwardSpeed qiymatini tiklaymiz
+        isSpeedBoosted = false; // Tezlik yana o‘sib borishi uchun imkon beramiz
+    }
+
+
     private void Jump()
     {
         direction.y = jumpForce;
@@ -229,5 +292,36 @@ public class PlayerController : MonoBehaviour
         //controller.height = 2;
 
         //isSliding = false;
+    }
+
+
+    public void IncreaseSpeed(float amount)
+    {
+        forwardSpeed += amount; // Tezlikni oshirish
+        forwardSpeed = Mathf.Clamp(forwardSpeed, 0, maxSpeed); // Maksimal tezlikni oshirmaslik
+    }
+
+    public bool IsMaxSpeedReached()
+    {
+        return forwardSpeed >= maxSpeed;
+    }
+
+    //public void IncreaseSpeed(float amount)
+    //{
+    //    forwardSpeed = amount;
+    //    Debug.Log("Tezlik 15 ga teng!");
+    //    StartCoroutine(ResetSpeedAfterDelay(3.0f));
+    //}
+
+    //private IEnumerator ResetSpeedAfterDelay(float delay)
+    //{
+    //    yield return new WaitForSeconds(delay);
+    //    forwardSpeed = forwardSpeed;
+    //    Debug.Log("Tezlik o'z holatiga qaytdi.");
+    //}
+
+    public void StartGame()
+    {
+        isGameStarted = true; // O'yinni boshlash
     }
 }

@@ -33,11 +33,11 @@ public class MainMenu : MonoBehaviour
     {
         Time.timeScale = 1;
     }
-    private void Update()
-    {
-        highScoreText.text = "High Score\n" + PlayerPrefs.GetInt("HighScore", 0);
-        gemsText.text = PlayerPrefs.GetInt("TotalGems", 0).ToString();
-    }
+    //private void Update()
+    //{
+    //    highScoreText.text = "High Score\n" + PlayerPrefs.GetInt("HighScore", 0);
+    //    gemsText.text = PlayerPrefs.GetInt("TotalGems", 0).ToString();
+    //}
     public void PlayGame()
     {
         SceneManager.LoadScene("Level");

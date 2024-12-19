@@ -48,7 +48,9 @@ public class PlayerManager : MonoBehaviour
         }
         coinsText.text = "Coins:" + numberOfCoins;
 
-        if(SwipeManager.tap)
+        // Agar foydalanuvchi bosgan bo'lsa (Touch yoki Mouse bosilishi)
+
+        if (Input.GetMouseButtonDown(0))
         {
             isGameStarted = true;   
             Destroy(startingText);
