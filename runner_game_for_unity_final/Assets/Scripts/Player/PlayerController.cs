@@ -139,6 +139,8 @@ public class PlayerController : MonoBehaviour
         if(SwipeManager.swipeDown || Input.GetKeyDown(KeyCode.DownArrow))
         {
             StartCoroutine(Slide());
+            FindObjectOfType<AudioManager>().PlaySound("Slide");
+
         }
 
         //if (isGrounded)
@@ -224,6 +226,8 @@ public class PlayerController : MonoBehaviour
     private void Jump()
     {
         direction.y = jumpForce;
+        FindObjectOfType<AudioManager>().PlaySound("Jump");
+
 
 
 
